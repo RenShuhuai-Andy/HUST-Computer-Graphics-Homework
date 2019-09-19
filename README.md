@@ -12,7 +12,7 @@
 4. configure 两次再 generate（注意选择适合自己的 IDE 版本）。
 5. 打开 build 中编译好的文件即可。（如，选择 Visual Studio 则打开 *.sln）。
 6. 右键工程（如作业一是 `HW01-sphere`），点击 "设为启动项目"，然后运行。
-7. note: 编译目录不要有特殊字符。配置有问题参考：[地址](https://learnopengl-cn.github.io/01 Getting started/02 Creating a window/#glfw_1)。
+7. note: 编译目录不要有特殊字符。配置有问题参考：[地址](https://learnopengl-cn.github.io/01%20Getting%20started/02%20Creating%20a%20window/#glfw_1)。
 
 ### 实验作业
 
