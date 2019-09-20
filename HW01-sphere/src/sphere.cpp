@@ -17,16 +17,15 @@ const unsigned int Y_SEGMENTS = 100;
 const unsigned int X_SEGMENTS = 100;
 const float PI = 3.1415926;
 
-template<typename T> T* vec2arr(vector<T>& vec) {
-	T* arr = new T[vec.size()];
-	if (!vec.empty()) {
-		memcpy(arr, &vec[0], vec.size() * sizeof(T));
-	}
-	return arr;
-}
+//template<typename T> T* vec2arr(vector<T>& vec) {
+//	T* arr = new T[vec.size()];
+//	if (!vec.empty()) {
+//		memcpy(arr, &vec[0], vec.size() * sizeof(T));
+//	}
+//	return arr;
+//}
 
-int main()
-{
+int main() {
 	// glfw: initialize and configure
 	// ------------------------------
 	glfwInit();
@@ -40,9 +39,8 @@ int main()
 
 	// glfw window creation
 	// --------------------
-	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
-	if (window == NULL)
-	{
+	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Sphere", NULL, NULL);
+	if (window == NULL) {
 		std::cout << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
 		return -1;
@@ -52,8 +50,7 @@ int main()
 
 	// glad: load all OpenGL function pointers
 	// ---------------------------------------
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-	{
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return -1;
 	}
@@ -61,15 +58,6 @@ int main()
 	// build and compile our shader program
 	// ------------------------------------
 	Shader ourShader("res/shader/3.3.shader.vs", "res/shader/3.3.shader.fs"); // you can name your shader files however you like
-
-	// set up vertex data (and buffer(s)) and configure vertex attributes
-	// ------------------------------------------------------------------
-	//float vertices[] = {
-	//	// positions         // colors
-	//	 0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  // bottom right
-	//	-0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // bottom left
-	//	 0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f   // top 
-	//};
 
 
 	// 生成球的顶点 
@@ -85,9 +73,15 @@ int main()
 			sphereVertices.push_back(xPos);
 			sphereVertices.push_back(yPos);
 			sphereVertices.push_back(zPos);
+			float rColor = cos(xSegment * 2.0f * PI) * sin(ySegment * PI);
+			float gColor = cos(ySegment * PI);
+			float bColor = sin(xSegment * 2.0f * PI) * sin(ySegment * PI);
+			sphereVertices.push_back(rColor);
+			sphereVertices.push_back(gColor);
+			sphereVertices.push_back(bColor);
 		}
 	}
-	float* vertices = vec2arr(sphereVertices);
+	//float* vertices = vec2arr(sphereVertices);
 
 
 	//根据球面上每一点的坐标，去构造一个一个三角形顶点数组 
@@ -102,7 +96,7 @@ int main()
 			sphereIndices.push_back(i * (X_SEGMENTS + 1) + j + 1); 
 		} 
 	}
-	int* indices = vec2arr(sphereIndices);
+	//int* indices = vec2arr(sphereIndices);
 
 
 	unsigned int VBO, VAO, EBO;
@@ -113,16 +107,18 @@ int main()
 	glBindVertexArray(VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sphereVertices.size() * sizeof(float), vertices, GL_STATIC_DRAW);
+	//glBufferData(GL_ARRAY_BUFFER, sphereVertices.size() * sizeof(float), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sphereVertices.size() * sizeof(float), &sphereVertices[0], GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sphereIndices.size() * sizeof(int), indices, GL_STATIC_DRAW);
+	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sphereIndices.size() * sizeof(int), indices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sphereIndices.size() * sizeof(int), &sphereIndices[0], GL_STATIC_DRAW);
 	// position attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 	// color attribute
-	//glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-	//glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
 
 	// note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -133,8 +129,8 @@ int main()
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);//使用线框模式绘制
 	//开启面剔除(只需要展示一个面，否则会有重合) 
-	glEnable(GL_CULL_FACE); 
-	glCullFace(GL_BACK);
+	//glEnable(GL_CULL_FACE); 
+	//glCullFace(GL_FRONT);
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
