@@ -24,6 +24,7 @@ include_directories(include/
                     external/glad/include/
                     external/glfw/include/
 					external/shader/include/
+					external/stb_image/include/
 					external/glm/
                     external/stb)
 
