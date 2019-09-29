@@ -19,3 +19,4 @@
 * 作业一：绘制球体 - `HW01-sphere` 。
 * 作业二：立方体旋转 - `HW02-rotating-cube` 。
 * 作业三：创建摄像机类 - `HW03-camera` 。
+* 作业四：Phong 模型 - `HW04-phong-model` 。
