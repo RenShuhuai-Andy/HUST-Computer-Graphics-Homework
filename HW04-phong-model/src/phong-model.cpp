@@ -2,6 +2,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "stb_image.h"
+#include "light.h"
 #include <vector>
 #include "shader/shader.h"
 #include "camera/camera.h"
@@ -35,7 +36,6 @@ float lastFrame = 0.0f;
 
 // lighting
 vec3 lightPos(1.2f, 1.0f, 2.0f);
-vec3 lightPos2(-1.2f, -1.0f, -2.0f);
 
 // type of light
 bool openDirectionalLight = false;
@@ -131,6 +131,13 @@ int main() {
 		vec3(0.0f,  0.0f, -3.0f)
 	};
 
+	vec3 pointLightColor[] = {
+		vec3(1.0f, 0.0f, 0.0f),
+		vec3(0.0f, 1.0f, 0.0f),
+		vec3(0.5f, 0.5f, 1.0f),
+		vec3(1.0f, 1.0f, 0.5f)
+	};
+
 	unsigned int VBO, cubeVAO;
 	glGenVertexArrays(1, &cubeVAO);
 	glGenBuffers(1, &VBO);
@@ -201,53 +208,35 @@ int main() {
 		   by using 'Uniform buffer objects', but that is something we'll discuss in the 'Advanced GLSL' tutorial.
 		*/
 		// directional light
-		lightingShader.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
-		lightingShader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
-		lightingShader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
-		lightingShader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
+		vec3 ambient(0.05f, 0.05f, 0.05f);
+		vec3 diffuse(0.8f, 0.8f, 0.8f);
+		vec3 specular(1.0f, 1.0f, 1.0f);
+		vec3 direction(-0.2f, -1.0f, -0.3f);
+		vec3 dirColor(1.0f, 1.0f, 1.0f);
+		DirLight dirLight(lightingShader, "dirLight", dirColor, direction, ambient, diffuse, specular);
+		dirLight.setDirLight();
+		// point light
+		float constant = 1.0f;
+		float linear = 0.09;
+		float quadratic = 0.032;
 		// point light 1
-		lightingShader.setVec3("pointLights[0].position", pointLightPositions[0]);
-		lightingShader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
-		lightingShader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
-		lightingShader.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
-		lightingShader.setFloat("pointLights[0].constant", 1.0f);
-		lightingShader.setFloat("pointLights[0].linear", 0.09);
-		lightingShader.setFloat("pointLights[0].quadratic", 0.032);
+		PointLight pointLight1(lightingShader, "pointLights[0]", pointLightColor[0], pointLightPositions[0], ambient, diffuse, specular, constant, linear, quadratic);
+		pointLight1.setPointLight();
 		// point light 2
-		lightingShader.setVec3("pointLights[1].position", pointLightPositions[1]);
-		lightingShader.setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
-		lightingShader.setVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
-		lightingShader.setVec3("pointLights[1].specular", 1.0f, 1.0f, 1.0f);
-		lightingShader.setFloat("pointLights[1].constant", 1.0f);
-		lightingShader.setFloat("pointLights[1].linear", 0.09);
-		lightingShader.setFloat("pointLights[1].quadratic", 0.032);
+		PointLight pointLight2(lightingShader, "pointLights[1]", pointLightColor[1], pointLightPositions[1], ambient, diffuse, specular, constant, linear, quadratic);
+		pointLight2.setPointLight();
 		// point light 3
-		lightingShader.setVec3("pointLights[2].position", pointLightPositions[2]);
-		lightingShader.setVec3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
-		lightingShader.setVec3("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
-		lightingShader.setVec3("pointLights[2].specular", 1.0f, 1.0f, 1.0f);
-		lightingShader.setFloat("pointLights[2].constant", 1.0f);
-		lightingShader.setFloat("pointLights[2].linear", 0.09);
-		lightingShader.setFloat("pointLights[2].quadratic", 0.032);
+		PointLight pointLight3(lightingShader, "pointLights[2]", pointLightColor[2], pointLightPositions[2], ambient, diffuse, specular, constant, linear, quadratic);
+		pointLight3.setPointLight();
 		// point light 4
-		lightingShader.setVec3("pointLights[3].position", pointLightPositions[3]);
-		lightingShader.setVec3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
-		lightingShader.setVec3("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
-		lightingShader.setVec3("pointLights[3].specular", 1.0f, 1.0f, 1.0f);
-		lightingShader.setFloat("pointLights[3].constant", 1.0f);
-		lightingShader.setFloat("pointLights[3].linear", 0.09);
-		lightingShader.setFloat("pointLights[3].quadratic", 0.032);
+		PointLight pointLight4(lightingShader, "pointLights[3]", pointLightColor[3], pointLightPositions[3], ambient, diffuse, specular, constant, linear, quadratic);
+		pointLight4.setPointLight();
 		// spotLight
-		lightingShader.setVec3("spotLight.position", camera.Position);
-		lightingShader.setVec3("spotLight.direction", camera.Front);
-		lightingShader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
-		lightingShader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
-		lightingShader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
-		lightingShader.setFloat("spotLight.constant", 1.0f);
-		lightingShader.setFloat("spotLight.linear", 0.09);
-		lightingShader.setFloat("spotLight.quadratic", 0.032);
-		lightingShader.setFloat("spotLight.cutOff", cos(radians(12.5f)));
-		lightingShader.setFloat("spotLight.outerCutOff", cos(radians(15.0f)));
+		float cutOff = cos(radians(12.5f));
+		float outerCutOff = cos(radians(15.0f));
+		vec3 spotLightColor(0.5, 1.0, 1.0);
+		SpotLight spotLight(lightingShader, "spotLight", spotLightColor, camera.Position, ambient, diffuse, specular, constant, linear, quadratic, camera.Front, cutOff, outerCutOff);
+		spotLight.setSpotLight();
 
 		if (openDirectionalLight)
 			lightingShader.setBool("isDirectionalLight", true);
@@ -272,6 +261,7 @@ int main() {
 			model = translate(model, pointLightPositions[i]);
 			model = scale(model, vec3(0.2f)); // Make it a smaller cube
 			lampShader.setMat4("model", model);
+			lampShader.setVec3("fragcolor", pointLightColor[i]);
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 

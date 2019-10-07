@@ -25,6 +25,7 @@ include_directories(include/
                     external/glfw/include/
 					external/shader/include/
 					external/stb_image/include/
+					external/light/include/
 					external/camera/include/
 					external/glm/
                     external/stb)
