@@ -4,6 +4,8 @@
 - 按 `2` 键打开点光源（Point Light）
 - 按 `3` 键打开聚光（Spot Light）
 
+![](./assets/ezgif.com-optimize.gif)
+
 ## 问题
 
 - 为什么 result = lightColor * toyColor 用乘法？
